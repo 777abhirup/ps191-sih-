@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SafeZone | Disaster Intelligence</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <aside class="sidebar">
+    <a class="brand" href="#"><span class="brand-mark">S</span> SafeZone</a>
+    <p class="eyebrow">DISASTER INTELLIGENCE</p>
+    <nav>
+      <button class="nav-item active" data-panel="overview"><span>▦</span> Command centre</button>
+      <button class="nav-item" data-panel="capacity"><span>◌</span> Carrying capacity</button>
+      <button class="nav-item" data-panel="relocation"><span>↗</span> Relocation planner</button>
+    </nav>
+    <div class="sidebar-footer"><span class="live-dot"></span> Live monitoring<br /><small id="modelTimestamp">Weather model loading</small></div>
+  </aside>
+  <main>
+    <header>
+      <div><p class="eyebrow">UTTARAKHAND · LANDSLIDE EARLY ACTION</p><h1>Situation overview</h1></div>
+      <div class="header-actions"><span class="status-pill" id="dataStatus"><i></i> Connecting live data</span><button class="button ghost" id="exportBtn">Export brief</button><button class="button" id="runBtn">Refresh live data</button></div>
+    </header>
+    <section id="overview" class="panel active">
+      <div class="metrics">
+        <article><span class="metric-icon red">▲</span><div><p>High-risk area</p><strong id="riskArea">-- km²</strong><small id="riskTrend">From current HSI model</small></div></article>
+        <article><span class="metric-icon amber">◒</span><div><p>Habitations at risk</p><strong id="riskHabitations">--</strong><small id="habitationNote">Zone assessment loading</small></div></article>
+        <article><span class="metric-icon blue">⌂</span><div><p>People to relocate</p><strong id="riskPeople">--</strong><small id="peopleNote">Priority score ≥ 0.75</small></div></article>
+        <article><span class="metric-icon green">✓</span><div><p>Available safe capacity</p><strong>1,390</strong><small>Across 3 green zones</small></div></article>
+      </div>
+      <div class="grid-main">
+        <section class="card map-card">
+          <div class="card-heading"><div><h2>Dynamic hazard map</h2><p>Live weather-driven HSI · 30 m assessment logic</p></div><span class="map-date" id="mapDate">Awaiting live feed</span></div>
+          <div class="map-wrap"><div id="map" aria-label="Interactive hazard map"></div><div class="map-readout"><span class="pulse-dot"></span><span id="selectedZone">Kedar settlement</span><b id="selectedHsi">HSI --</b></div></div>
+          <div class="legend"><span><i class="legend-red"></i>Red · HSI ≥ 0.75 · evacuate</span><span><i class="legend-orange"></i>Orange · HSI 0.50–0.74 · monitor</span><span><i class="legend-green"></i>Green · destination</span><button class="text-button" id="fitZones">Fit all zones ⤢</button></div>
+        </section>
+        <section class="card triggers">
+          <div class="card-heading"><div><h2>Live triggers</h2><p id="weatherSource">Open-Meteo weather model</p></div><button class="more" id="locationMenu" title="Focus selected location">⌖</button></div>
+          <div class="trigger-row"><span class="weather rain">☔</span><div><b>24-hour rainfall</b><small>Critical threshold: <span id="thresholdValue">95</span> mm</small></div><strong id="rainValue">-- mm</strong></div><div class="bar"><i id="rainBar"></i></div>
+          <div class="trigger-row"><span class="weather soil">◉</span><div><b>Topsoil moisture</b><small>0–7 cm model layer</small></div><strong id="soilValue">--</strong></div><div class="bar soilbar"><i id="soilBar"></i></div>
+          <div class="trigger-row"><span class="weather river">≋</span><div><b>Wind / storm force</b><small>Live weather observation</small></div><strong id="windValue">-- km/h</strong></div>
+          <div class="formula-card"><b>Dynamic HSI formula</b><code>HSI = HSI<sub>base</sub> × [1 + a(P<sub>24</sub>/P<sub>threshold</sub>) + b(SM)]</code><small>a = 0.24 · b = 0.16 · result capped at 1.00</small></div>
+          <div class="note" id="alertReason"><b>Connecting to weather feed…</b><br />The model will assess rainfall and soil moisture for the selected location.</div>
+        </section>
+      </div>
+      <div class="bottom-grid">
+        <section class="card table-card"><div class="card-heading"><div><h2>Priority habitations</h2><p>Click a row to fly to the location</p></div><button class="text-button" data-panel="relocation">Open planner →</button></div><div class="data-table"><div class="table-head"><span>Habitation</span><span>HSI</span><span>CCI</span><span>RPS</span><span>Action</span></div><div id="habitationRows"></div></div></section>
+        <section class="card model-card"><p class="eyebrow">MODEL EXPLAINER</p><h2>One shared picture for faster action.</h2><p>The Dynamic HSI combines terrain susceptibility with latest 24-hour precipitation and topsoil moisture. Capacity stress and demographic vulnerability then determine who moves first.</p><div class="formula">RPS = .50 · HSI + .25 · (1 − CCI) + .25 · V<sub>demographic</sub></div><button class="text-button" id="modelDetails">View formula assumptions →</button></section>
+      </div>
+    </section>
+    <section id="capacity" class="panel">
+      <div class="section-title"><p class="eyebrow">CCA ENGINE</p><h1>Carrying-capacity assessment</h1><p>Identify settlements where physical, ecological, and infrastructure limits are exceeded.</p></div>
+      <div class="capacity-layout"><section class="card calculator"><h2>Scenario controls</h2><label>Slope & soil stability <output id="stabilityOut">0.64</output><input id="stability" type="range" min="0" max="1" step=".01" value=".64" /></label><label>Water recharge capacity <output id="rechargeOut">0.72</output><input id="recharge" type="range" min="0" max="1" step=".01" value=".72" /></label><label>Infrastructure capacity <output id="infraOut">0.68</output><input id="infra" type="range" min="0" max="1" step=".01" value=".68" /></label><label>Population density <output id="densityOut">0.66</output><input id="density" type="range" min=".1" max="1" step=".01" value=".66" /></label><label>Built-up structural load <output id="loadOut">0.71</output><input id="load" type="range" min=".1" max="1" step=".01" value=".71" /></label></section><section class="card cci-result"><p class="eyebrow">CURRENT SETTLEMENT SCORE</p><div id="cciNumber">0.63</div><h2 id="cciStatus">Over-capacity / unstable</h2><p id="cciText">Construction should be frozen and relocation planning initiated.</p><div class="capacity-meter"><i id="cciMeter"></i><span>Critical</span><span>Threshold 1.0</span><span>Resilient</span></div><div class="recommendations"><b>Recommended action</b><p>Prioritize drainage reinforcement, pause new construction, and move vulnerable households to Pine Ridge.</p></div></section></div>
+    </section>
+    <section id="relocation" class="panel">
+      <div class="section-title"><p class="eyebrow">IMMEDIATE RELOCATION ENGINE</p><h1>Relocation planner</h1><p>Match affected households to safe zones while preserving capacity and route safety.</p></div>
+      <div class="planner-grid"><section class="card route-card"><h2>Recommended movement plan</h2><div class="route"><span class="route-step risk">1</span><div><b>Kedar settlement</b><small>428 people · ranked automatically</small></div><span class="route-arrow">→</span><div><b>Pine Ridge shelter</b><small>612 of 820 spaces available</small></div><button class="button small">Assign</button></div><div class="route"><span class="route-step warn">2</span><div><b>Bhatiya ward</b><small>315 people · ranked automatically</small></div><span class="route-arrow">→</span><div><b>Govt. Inter College</b><small>315 of 540 spaces available</small></div><button class="button small">Assign</button></div><div class="route"><span class="route-step">3</span><div><b>Jhakholi cluster</b><small>201 people · ranked automatically</small></div><span class="route-arrow">→</span><div><b>Monitor in place</b><small>Reassess after next data refresh</small></div><button class="button small ghost">Watch</button></div></section><section class="card readiness"><h2>Evacuation readiness</h2><div class="readiness-number">743 <span>/ 1,284 people assigned</span></div><div class="progress"><i></i></div><div class="checklist"><p>✓ Shelter capacity verified</p><p>✓ Priority household list ready</p><p>○ Transport allocation pending</p><p>○ Route patrol confirmation pending</p></div><button class="button full">Generate field brief</button></section></div>
+    </section>
+  </main>
+  <div class="toast" id="toast">Assessment updated.</div>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script src="app.js"></script>
+</body>
+</html>
