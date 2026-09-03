@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SafeZone | Disaster Intelligence</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <aside class="sidebar">
+    <a class="brand" href="#"><span class="brand-mark">S</span> SafeZone</a>
+    <p class="eyebrow">DISASTER INTELLIGENCE</p>
+    <nav>
+      <button class="nav-item active" data-panel="overview"><span>▦</span> Command centre</button>
+      <button class="nav-item" data-panel="capacity"><span>◌</span> Carrying capacity</button>
+      <button class="nav-item" data-panel="relocation"><span>↗</span> Relocation planner</button>
+    </nav>
+    <div class="sidebar-footer"><span class="live-dot"></span> Live monitoring<br /><small>Last model run: just now</small></div>
+  </aside>
+
+  <main>
+    <header>
+      <div><p class="eyebrow">UTTARAKHAND · LANDSLIDE EARLY ACTION</p><h1>Situation overview</h1></div>
+      <div class="header-actions"><span class="status-pill"><i></i> Risk elevated</span><button class="button ghost" id="exportBtn">Export brief</button><button class="button" id="runBtn">Run assessment</button></div>
+    </header>
+
+    <section id="overview" class="panel active">
+      <div class="metrics">
+        <article><span class="metric-icon red">▲</span><div><p>High-risk area</p><strong id="riskArea">24.8 km²</strong><small>↑ 3.6% since yesterday</small></div></article>
+        <article><span class="metric-icon amber">◒</span><div><p>Habitations at risk</p><strong id="riskHabitations">17</strong><small>4 need immediate action</small></div></article>
+        <article><span class="metric-icon blue">⌂</span><div><p>People to relocate</p><strong id="riskPeople">1,284</strong><small>Priority score ≥ 0.75</small></div></article>
+        <article><span class="metric-icon green">✓</span><div><p>Available safe capacity</p><strong>1,890</strong><small>Across 6 green zones</small></div></article>
+      </div>
+
+      <div class="grid-main">
+        <section class="card map-card">
+          <div class="card-heading"><div><h2>Dynamic hazard map</h2><p>HSI raster classification · 30 m cells</p></div><span class="map-date">04 SEP 2026 · 10:30 IST</span></div>
+          <div class="map-wrap">
+            <svg viewBox="0 0 760 410" aria-label="Hazard map">
+              <defs>
+                <linearGradient id="land" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#d9e9e3"/><stop offset="1" stop-color="#b8d3cb"/></linearGradient>
+                <pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse"><path d="M 24 0 L 0 0 0 24" fill="none" stroke="#fff" stroke-opacity=".4" stroke-width=".7"/></pattern>
+              </defs>
+              <rect width="760" height="410" fill="url(#land)"/>
+              <path d="M-35 88 C100 40 109 138 239 95 S397 75 468 125 S645 183 795 78" fill="none" stroke="#8baec0" stroke-width="15" opacity=".8"/>
+              <path d="M-35 88 C100 40 109 138 239 95 S397 75 468 125 S645 183 795 78" fill="none" stroke="#dcecf1" stroke-width="5"/>
+              <path d="M11 332 C103 238 168 322 260 250 S423 188 517 286 S669 287 784 235" fill="none" stroke="#9db7ac" stroke-width="11"/>
+              <path d="M57 210 C123 148 171 172 243 207" fill="none" stroke="#f8faf7" stroke-width="6" opacity=".9"/>
+              <path d="M410 63 C464 94 511 89 568 45" fill="none" stroke="#f8faf7" stroke-width="6" opacity=".9"/>
+              <path d="M135 145 L258 84 L365 142 L336 241 L198 264 L113 210Z" fill="#f05555" fill-opacity=".78" stroke="#dc4141" stroke-width="3"/>
+              <path d="M359 151 L451 110 L551 175 L520 270 L413 288 L334 236Z" fill="#f8b84c" fill-opacity=".75" stroke="#e4a233" stroke-width="3"/>
+              <path d="M534 227 L630 186 L709 243 L677 346 L571 349 L507 294Z" fill="#58ae81" fill-opacity=".78" stroke="#408e65" stroke-width="3"/>
+              <rect width="760" height="410" fill="url(#grid)"/>
+              <circle cx="227" cy="180" r="9" fill="#fff" stroke="#aa2828" stroke-width="4"/><text x="243" y="185" class="svg-label">Kedar settlement</text>
+              <circle cx="472" cy="214" r="8" fill="#fff" stroke="#b27a18" stroke-width="4"/><text x="486" y="219" class="svg-label">Bhatiya ward</text>
+              <circle cx="623" cy="281" r="8" fill="#fff" stroke="#227450" stroke-width="4"/><text x="637" y="286" class="svg-label">Pine Ridge shelter</text>
+            </svg>
+            <div class="map-tools"><button>+</button><button>−</button><button>⌖</button></div>
+          </div>
+          <div class="legend"><span><i class="legend-red"></i>Red · evacuate</span><span><i class="legend-orange"></i>Orange · monitor</span><span><i class="legend-green"></i>Green · safe zone</span><span><i class="legend-grid"></i>30 m assessment grid</span></div>
+        </section>
+
+        <section class="card triggers">
+          <div class="card-heading"><div><h2>Live triggers</h2><p>Model inputs</p></div><button class="more">•••</button></div>
+          <div class="trigger-row"><span class="weather rain"> </span><div><b>24-hour rainfall</b><small>Critical threshold: 95 mm</small></div><strong id="rainValue">122 mm</strong></div>
+          <div class="bar"><i id="rainBar" style="width:82%"></i></div>
+          <div class="trigger-row"><span class="weather soil">◉</span><div><b>Soil saturation</b><small>Surface sensor network</small></div><strong id="soilValue">0.78</strong></div>
+          <div class="bar soilbar"><i id="soilBar" style="width:78%"></i></div>
+          <div class="trigger-row"><span class="weather river">≈</span><div><b>River discharge</b><small>Mandakini gauge</small></div><strong>Elevated</strong></div>
+          <div class="note"><b>Why the alert?</b><br />Rainfall has exceeded the local threshold while soil moisture remains near saturation.</div>
+        </section>
+      </div>
+
+      <div class="bottom-grid">
+        <section class="card table-card">
+          <div class="card-heading"><div><h2>Priority habitations</h2><p>Ranked by relocation priority score</p></div><button class="text-button" data-panel="relocation">Open planner →</button></div>
+          <div class="data-table">
+            <div class="table-head"><span>Habitation</span><span>HSI</span><span>CCI</span><span>RPS</span><span>Action</span></div>
+            <div class="table-row"><span><b>Kedar settlement</b><small>428 residents</small></span><span class="score danger">0.91</span><span class="score danger">0.64</span><span><b class="rps red-bg">0.89</b></span><span>Evacuate now</span></div>
+            <div class="table-row"><span><b>Bhatiya ward</b><small>315 residents</small></span><span class="score warning">0.78</span><span class="score danger">0.72</span><span><b class="rps orange-bg">0.76</b></span><span>Prepare transport</span></div>
+            <div class="table-row"><span><b>Jhakholi cluster</b><small>201 residents</small></span><span class="score warning">0.73</span><span class="score warning">0.82</span><span><b class="rps orange-bg">0.71</b></span><span>Monitor</span></div>
+          </div>
+        </section>
+        <section class="card model-card"><p class="eyebrow">MODEL EXPLAINER</p><h2>One shared picture for faster action.</h2><p>The Dynamic HSI combines terrain susceptibility with today’s rainfall and soil saturation. Capacity stress and demographic vulnerability then determine who moves first.</p><div class="formula">RPS = W₁ · HSI + W₂ · (1 − CCI) + W₃ · V<sub>demographic</sub></div><button class="text-button">View model details →</button></section>
+      </div>
+    </section>
+
+    <section id="capacity" class="panel">
+      <div class="section-title"><p class="eyebrow">CCA ENGINE</p><h1>Carrying-capacity assessment</h1><p>Identify settlements where physical, ecological, and infrastructure limits are exceeded.</p></div>
+      <div class="capacity-layout">
+        <section class="card calculator"><h2>Scenario controls</h2>
+          <label>Slope &amp; soil stability <output id="stabilityOut">0.64</output><input id="stability" type="range" min="0" max="1" step=".01" value=".64" /></label>
+          <label>Water recharge capacity <output id="rechargeOut">0.72</output><input id="recharge" type="range" min="0" max="1" step=".01" value=".72" /></label>
+          <label>Infrastructure capacity <output id="infraOut">0.68</output><input id="infra" type="range" min="0" max="1" step=".01" value=".68" /></label>
+          <label>Population density <output id="densityOut">0.66</output><input id="density" type="range" min=".1" max="1" step=".01" value=".66" /></label>
+          <label>Built-up structural load <output id="loadOut">0.71</output><input id="load" type="range" min=".1" max="1" step=".01" value=".71" /></label>
+        </section>
+        <section class="card cci-result"><p class="eyebrow">CURRENT SETTLEMENT SCORE</p><div id="cciNumber">0.63</div><h2 id="cciStatus">Over-capacity / unstable</h2><p id="cciText">Construction should be frozen and relocation planning initiated.</p><div class="capacity-meter"><i id="cciMeter"></i><span>Critical</span><span>Threshold 1.0</span><span>Resilient</span></div><div class="recommendations"><b>Recommended action</b><p>Prioritize drainage reinforcement, pause new construction, and move vulnerable households to Pine Ridge.</p></div></section>
+      </div>
+    </section>
+
+    <section id="relocation" class="panel">
+      <div class="section-title"><p class="eyebrow">IMMEDIATE RELOCATION ENGINE</p><h1>Relocation planner</h1><p>Match affected households to safe zones while preserving capacity and route safety.</p></div>
+      <div class="planner-grid">
+        <section class="card route-card"><h2>Recommended movement plan</h2>
+          <div class="route"><span class="route-step risk">1</span><div><b>Kedar settlement</b><small>428 people · RPS 0.89</small></div><span class="route-arrow">→</span><div><b>Pine Ridge shelter</b><small>612 of 820 spaces available</small></div><button class="button small">Assign</button></div>
+          <div class="route"><span class="route-step warn">2</span><div><b>Bhatiya ward</b><small>315 people · RPS 0.76</small></div><span class="route-arrow">→</span><div><b>Govt. Inter College</b><small>315 of 540 spaces available</small></div><button class="button small">Assign</button></div>
+          <div class="route"><span class="route-step">3</span><div><b>Jhakholi cluster</b><small>201 people · RPS 0.71</small></div><span class="route-arrow">→</span><div><b>Monitor in place</b><small>Reassess in 2 hours</small></div><button class="button small ghost">Watch</button></div>
+        </section>
+        <section class="card readiness"><h2>Evacuation readiness</h2><div class="readiness-number">743 <span>/ 1,284 people assigned</span></div><div class="progress"><i></i></div><div class="checklist"><p>✓ Shelter capacity verified</p><p>✓ Priority household list ready</p><p>○ Transport allocation pending</p><p>○ Route patrol confirmation pending</p></div><button class="button full">Generate field brief</button></section>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast">Assessment updated with current scenario inputs.</div>
+  <script src="app.js"></script>
+</body>
+</html>
