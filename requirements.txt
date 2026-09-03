@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+geopandas
+rasterio
+rasterstats
+h3
+requests
+shapely
+numpy
+scikit-learn
+osmnx
