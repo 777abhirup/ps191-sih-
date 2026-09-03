@@ -1,0 +1,7 @@
+services:
+  hazard-app:
+    build: .
+    container_name: ps191_hazard_platform
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
